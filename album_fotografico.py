@@ -1,4 +1,6 @@
 from csv import reader
+from pdb import find_function
+
 
 def carica_da_file(file_path):
     try:
@@ -45,8 +47,16 @@ def cerca_foto(album, codice):
 
 
 def elenco_foto_anno_per_titolo(album, anno):
-    """Ordina i titoli delle foto di un dato anno in ordine alfabetico"""
-    # TODO
+    try:
+        if anno in album:
+            titoli=[]
+            for foto in album:
+                titoli.append(foto[1])
+            return sorted(titoli)
+        else:
+            return None
+    except :
+        return None
 
 
 def main():
