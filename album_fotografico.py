@@ -1,16 +1,47 @@
+from csv import reader
+
 def carica_da_file(file_path):
-    """Carica le foto dal file, creando un nuovo anno ogni volta che compare per la prima volta"""
-    # TODOnn
+    try:
+        foto_per_anno={}
+        with open(file_path,"r") as csvfile:
+            lettore=reader(csvfile)
+            for row in lettore:
+                try:
+                    anno = int(row[4])
+                except ValueError:
+                    #se row[4] è "Anno" il codice entra qui e salta il giro
+                    continue
+                foto=row[0:4]
+                if anno not in foto_per_anno:
+                    foto_per_anno[anno]=[]
+                foto_per_anno[anno].append(foto)
+            return foto_per_anno
+
+    except FileNotFoundError:
+        return None
 
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
-    """Aggiunge una foto all'album, creando l'anno al volo se non è ancora presente"""
-    # TODObb
+    try:
+        if anno not in album:
+            album[anno]=[]
+        nuovafoto=[codice,titolo,autore,mese]
+        album[anno].append(nuovafoto)
+        return nuovafoto
+
+    except OSError :
+        return None
 
 
 def cerca_foto(album, codice):
-    """Cerca una foto nell'album dato il codice"""
-    # TODO
+    try:
+        for key in album:
+            for foto in album[key]:
+                if foto[0] == codice:
+                return f"{foto[0]},{foto[1]},{foto[2]},{foto[3]},album[key]"
+            return None
+    except:
+        return None
 
 
 def elenco_foto_anno_per_titolo(album, anno):
