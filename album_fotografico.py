@@ -1,6 +1,4 @@
-from csv import reader
-from pdb import find_function
-
+from csv import reader,writer
 
 def carica_da_file(file_path):
     try:
@@ -18,21 +16,31 @@ def carica_da_file(file_path):
                     foto_per_anno[anno]=[]
                 foto_per_anno[anno].append(foto)
             return foto_per_anno
-
     except FileNotFoundError:
         return None
 
 
 def aggiungi_foto(album, codice, titolo, autore, mese, anno, file_path):
-    try:
-        if anno not in album:
-            album[anno]=[]
-        nuovafoto=[codice,titolo,autore,mese]
-        album[anno].append(nuovafoto)
-        return nuovafoto
-
-    except OSError :
+    if not (1 <= mese <= 12):
         return None
+
+    for key in album:
+        for foto in album[key]:
+            if foto[0] == codice:
+                return None
+
+    try:
+        with open(file_path, "a", newline="", encoding="utf-8") as csvfile:
+            scrittore = writer(csvfile)
+            scrittore.writerow([codice, titolo, autore, mese, anno])
+    except (FileNotFoundError, OSError):
+        return None
+
+    if anno not in album:
+        album[anno]=[]
+    nuovafoto=[codice,titolo,autore,mese]
+    album[anno].append(nuovafoto)
+    return nuovafoto
 
 
 def cerca_foto(album, codice):
@@ -40,9 +48,9 @@ def cerca_foto(album, codice):
         for key in album:
             for foto in album[key]:
                 if foto[0] == codice:
-                return f"{foto[0]},{foto[1]},{foto[2]},{foto[3]},album[key]"
+                    return f"{foto[0]}, {foto[1]}, {foto[2]}, {foto[3]}, {key}"
             return None
-    except:
+    except OSError:
         return None
 
 
@@ -55,12 +63,12 @@ def elenco_foto_anno_per_titolo(album, anno):
             return sorted(titoli)
         else:
             return None
-    except :
+    except OSError:
         return None
 
 
 def main():
-    album = []
+    album = {}
     file_path = "album_fotografico.csv"
 
     while True:
